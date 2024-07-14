@@ -4,15 +4,15 @@
 seeds = false
 skip-lint = false
 
-[programs.localnet]
-counter = "2h7sAurAzdozCvZkKejcvTBsWeQSrmD5BTjyHUPSrPdi"
+[programs.devnet]
+counter = "3tz3xvHVNkmjKzuiGJPvbVYsf688STrxeg2iMqJ5H7we"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "Localnet"
-wallet = "~/.config/solana/id.json"
+cluster = "Devnet"
+wallet = "/Users/shivamsoni/.config/solana/id.json"
 
 [scripts]
 test = "../node_modules/.bin/nx run anchor:jest"
