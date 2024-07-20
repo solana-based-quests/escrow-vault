@@ -5,7 +5,7 @@ seeds = false
 skip-lint = false
 
 [programs.devnet]
-counter = "3tz3xvHVNkmjKzuiGJPvbVYsf688STrxeg2iMqJ5H7we"
+counter = "CdbVJdguReS1ij7ZrUyAbf8KBfMjT75jyhSCggtVrPon"
 
 [registry]
 url = "https://api.apr.dev"

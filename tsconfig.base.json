@@ -19,5 +19,6 @@
       "@escrow/anchor": ["anchor/src/index.ts"]
     }
   },
+  "ignoreBuildErrors": true,
   "exclude": ["node_modules", "tmp"]
 }

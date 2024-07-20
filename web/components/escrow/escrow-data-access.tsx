@@ -2,7 +2,7 @@
 
 import { getEscrowProgram, getEscrowProgramId } from '@escrow/anchor';
 import { useConnection } from '@solana/wallet-adapter-react';
-import { Cluster, PublicKey } from '@solana/web3.js';
+import { Cluster, PublicKey, Keypair, SystemProgram } from '@solana/web3.js';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import toast from 'react-hot-toast';
@@ -11,18 +11,19 @@ import { useAnchorProvider } from '../solana/solana-provider';
 import { useTransactionToast } from '../ui/ui-layout';
 import { BN } from '@coral-xyz/anchor';
 import { randomBytes } from "crypto";
-import { TOKEN_2022_PROGRAM_ID } from "@solana/spl-token";
+import { getAssociatedTokenAddressSync, ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes';
+import { createMint, getAccount, createAssociatedTokenAccount, mintToChecked } from "@solana/spl-token";
 
 
-const mint_a = new PublicKey("7XHomc5Tpjtcffcr5KPY9YESfYigwpMJQ9CPKNjKKphi"); // 9bRS4potSUSRFPU2aRiHCnDPMngsTtT75vjad8U1kqBL  ata
-const mint_b = new PublicKey("AMuwCWGT79K7B7FSPeXmswFwSDoCXqNMF5kyFk8AbWvS"); // GvRXqHKasigbbyhMctyW7zFSMUAmTbvNAoWG9iSQ7FEx ata
-
+const seed = new BN(randomBytes(8));
 
 export function useEscrowProgram() {
   const { connection } = useConnection();
   const { cluster } = useCluster();
   const transactionToast = useTransactionToast();
   const provider = useAnchorProvider();
+
   const programId = useMemo(
     () => getEscrowProgramId(cluster.network as Cluster),
     [cluster]
@@ -34,8 +35,6 @@ export function useEscrowProgram() {
     queryFn: () => program.account.escrow.all(),
   });
 
-  console.log("acc", accounts)
-
   const getProgramAccount = useQuery({
     queryKey: ['get-program-account', { cluster }],
     queryFn: () => connection.getParsedAccountInfo(programId),
@@ -45,21 +44,64 @@ export function useEscrowProgram() {
 
   const initializeEscrow = useMutation({
     mutationKey: ['escrow', 'make_escrow', { cluster }],
-    mutationFn: async ({ deposit, receive, maker }: { deposit: string; receive: string; maker: PublicKey }) => {
+    mutationFn: async ({ demosecretKey, deposit, receive, maker, setFirstMint, setFirstMintAta}: { demosecretKey: string; deposit: string; receive: string; maker: PublicKey; setFirstMint: any; setFirstMintAta: any;}) => {
 
-      const seed = new BN(randomBytes(8));
+      const feePayer = Keypair.fromSecretKey(
+        bs58.decode(demosecretKey)
+      );
 
+      const firstmintPubkey = await createMint(
+        connection, // conneciton
+        feePayer, // fee payer
+        maker, // mint authority
+        maker, // freeze authority 
+        8 // decimals
+      );
+
+      setFirstMint(firstmintPubkey);
+
+     
+      const firstmintata = await createAssociatedTokenAccount(
+        connection, // connection
+        feePayer, // fee payer
+        firstmintPubkey, // mint
+        maker // owner,
+      );
+
+      setFirstMintAta(firstmintata);
+
+
+      const txhashforFirstMintto = await mintToChecked(
+        connection, // connection
+        feePayer, // fee payer
+        firstmintPubkey, // mint
+        firstmintata, // receiver (should be a token account)
+        maker, // mint authority
+        new BN(9999999999999), // amount. if your decimals is 8, you mint 10^8 for 1 token.
+        8 // decimals
+      );
+    
       const dnum = Number(deposit);
       const rnum = Number(receive);
 
 
+      const escrow = PublicKey.findProgramAddressSync(
+        [Buffer.from("escrow"), maker.toBuffer(), seed.toArrayLike(Buffer, "le", 8)],
+        program.programId
+      )[0]
+
+      const vault = getAssociatedTokenAddressSync(firstmintPubkey, escrow, true, TOKEN_PROGRAM_ID)
+
       return program.methods.make(seed, new BN(dnum), new BN(rnum)).accounts({
         maker: maker,
-        mintA: mint_a,
-        mintB: mint_b,
-        tokenProgram: TOKEN_2022_PROGRAM_ID,
+        mintA: firstmintPubkey,
+        makerAtaA: firstmintata,
+        escrow: escrow,
+        vault: vault,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+        systemProgram: SystemProgram.programId
       }).rpc();
-
     },
 
     onSuccess: (signature) => {
@@ -69,13 +111,16 @@ export function useEscrowProgram() {
     onError: () => toast.error('Failed to initialize account'),
   });
 
+
   return {
     program,
     programId,
     accounts,
     getProgramAccount,
-    initializeEscrow,
-  };
+    initializeEscrow
+  }
+
+
 }
 
 export function useEscrowProgramAccount({ account }: { account: PublicKey }) {
@@ -86,12 +131,31 @@ export function useEscrowProgramAccount({ account }: { account: PublicKey }) {
   const accountQuery = useQuery({
     queryKey: ['escrow', 'fetch', { cluster, account }],
     queryFn: () => program.account.escrow.fetch(account),
-  }); 
+  });
 
   const refundFromEscrow = useMutation({
     mutationKey: ['escrow', 'refund_from_escrow', { cluster }],
-    mutationFn: async ({ maker }: { maker: PublicKey }) => {
-      return program.methods.refund().rpc();
+    mutationFn: async ({ maker, firstMint, firstMintAta }: { maker: PublicKey; firstMint: PublicKey; firstMintAta: PublicKey }) => {
+
+      const escrow = PublicKey.findProgramAddressSync(
+        [Buffer.from("escrow"), maker.toBuffer(), seed.toArrayLike(Buffer, "le", 8)],
+        program.programId
+      )[0]
+
+      const vault = getAssociatedTokenAddressSync(firstMint, escrow, true, TOKEN_PROGRAM_ID)
+
+
+      return program.methods.refund().accounts({
+        maker: maker,
+        mintA: firstMint,
+        makerAtaA: firstMintAta,
+        escrow: escrow,
+        vault: vault,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+        systemProgram: SystemProgram.programId
+      }).rpc();
+
     },
 
     onSuccess: (signature) => {
@@ -102,23 +166,8 @@ export function useEscrowProgramAccount({ account }: { account: PublicKey }) {
   });
 
 
-  const takeFromEscrow = useMutation({
-    mutationKey: ['escrow', 'take_from_escrow', { cluster }],
-    mutationFn: async ({ maker }: { maker: PublicKey }) => {
-      return program.methods.take().rpc();
-    },
-
-    onSuccess: (signature) => {
-      transactionToast(signature);
-      return accounts.refetch();
-    },
-    onError: () => toast.error('Failed to take from Escrow account'),
-  });
-
-
   return {
     accountQuery,
-    refundFromEscrow,
-    takeFromEscrow
+    refundFromEscrow
   };
 }

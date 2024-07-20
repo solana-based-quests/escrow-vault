@@ -19,10 +19,8 @@ pub struct Make<'info> {
     #[account(
         mint::token_program = token_program
     )]
-    pub mint_b: InterfaceAccount<'info, Mint>,
     #[account(
-        init,
-        payer = maker,
+        mut,
         associated_token::mint = mint_a,
         associated_token::authority = maker,
         associated_token::token_program = token_program
@@ -55,7 +53,6 @@ impl<'info> Make<'info> {
             seed,
             maker: self.maker.key(),
             mint_a: self.mint_a.key(),
-            mint_b: self.mint_b.key(),
             receive,
             bump: bumps.escrow,
         });
