@@ -6,10 +6,10 @@ use contexts::*;
 pub mod state;
 pub use state::*;
 
-declare_id!("CdbVJdguReS1ij7ZrUyAbf8KBfMjT75jyhSCggtVrPon");
+declare_id!("532hd4Thge8xrp15FA7xnnn3GVZwcETVFE9nW85NBd4P");
 
 #[program]
-pub mod anchor_escrow {
+pub mod escrow_vault {
     use super::*;
 
     // make an escrow

@@ -1,7 +1,13 @@
-{
-  "address": "CdbVJdguReS1ij7ZrUyAbf8KBfMjT75jyhSCggtVrPon",
+/**
+ * Program IDL in camelCase format in order to be used in JS/TS.
+ *
+ * Note that this is only a type helper and is not the actual IDL. The original
+ * IDL can be found at `target/idl/escrow_vault.json`.
+ */
+export type EscrowVault = {
+  "address": "532hd4Thge8xrp15FA7xnnn3GVZwcETVFE9nW85NBd4P",
   "metadata": {
-    "name": "anchor_escrow",
+    "name": "escrowVault",
     "version": "0.1.0",
     "spec": "0.1.0",
     "description": "Created with Anchor"
@@ -26,10 +32,10 @@
           "signer": true
         },
         {
-          "name": "mint_a"
+          "name": "mintA"
         },
         {
-          "name": "maker_ata_a",
+          "name": "makerAtaA",
           "writable": true,
           "pda": {
             "seeds": [
@@ -39,11 +45,11 @@
               },
               {
                 "kind": "account",
-                "path": "token_program"
+                "path": "tokenProgram"
               },
               {
                 "kind": "account",
-                "path": "mint_a"
+                "path": "mintA"
               }
             ],
             "program": {
@@ -123,11 +129,11 @@
               },
               {
                 "kind": "account",
-                "path": "token_program"
+                "path": "tokenProgram"
               },
               {
                 "kind": "account",
-                "path": "mint_a"
+                "path": "mintA"
               }
             ],
             "program": {
@@ -170,14 +176,14 @@
           }
         },
         {
-          "name": "associated_token_program",
+          "name": "associatedTokenProgram",
           "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
         },
         {
-          "name": "token_program"
+          "name": "tokenProgram"
         },
         {
-          "name": "system_program",
+          "name": "systemProgram",
           "address": "11111111111111111111111111111111"
         }
       ],
@@ -218,13 +224,13 @@
           ]
         },
         {
-          "name": "mint_a",
+          "name": "mintA",
           "relations": [
             "escrow"
           ]
         },
         {
-          "name": "maker_ata_a",
+          "name": "makerAtaA",
           "writable": true,
           "pda": {
             "seeds": [
@@ -234,11 +240,11 @@
               },
               {
                 "kind": "account",
-                "path": "token_program"
+                "path": "tokenProgram"
               },
               {
                 "kind": "account",
-                "path": "mint_a"
+                "path": "mintA"
               }
             ],
             "program": {
@@ -303,7 +309,7 @@
               {
                 "kind": "account",
                 "path": "escrow.seed",
-                "account": "Escrow"
+                "account": "escrow"
               }
             ]
           }
@@ -319,11 +325,11 @@
               },
               {
                 "kind": "account",
-                "path": "token_program"
+                "path": "tokenProgram"
               },
               {
                 "kind": "account",
-                "path": "mint_a"
+                "path": "mintA"
               }
             ],
             "program": {
@@ -366,14 +372,14 @@
           }
         },
         {
-          "name": "associated_token_program",
+          "name": "associatedTokenProgram",
           "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
         },
         {
-          "name": "token_program"
+          "name": "tokenProgram"
         },
         {
-          "name": "system_program",
+          "name": "systemProgram",
           "address": "11111111111111111111111111111111"
         }
       ],
@@ -382,7 +388,7 @@
   ],
   "accounts": [
     {
-      "name": "Escrow",
+      "name": "escrow",
       "discriminator": [
         31,
         213,
@@ -397,7 +403,7 @@
   ],
   "types": [
     {
-      "name": "Escrow",
+      "name": "escrow",
       "type": {
         "kind": "struct",
         "fields": [
@@ -410,7 +416,7 @@
             "type": "pubkey"
           },
           {
-            "name": "mint_a",
+            "name": "mintA",
             "type": "pubkey"
           },
           {
@@ -425,4 +431,4 @@
       }
     }
   ]
-}
+};

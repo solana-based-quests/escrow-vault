@@ -1,100 +1,69 @@
 import * as anchor from '@coral-xyz/anchor';
 import { Program } from '@coral-xyz/anchor';
-import { Keypair } from '@solana/web3.js';
-import { Counter } from '../target/types/counter';
+import { Keypair, PublicKey, Connection, SystemProgram } from '@solana/web3.js';
+import { EscrowVault } from '../target/types/escrow_vault';
+import { BN } from '@coral-xyz/anchor';
+import { randomBytes } from "crypto";
+import { getAssociatedTokenAddressSync, ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import { createAssociatedTokenAccount } from "@solana/spl-token";
 
-describe('counter', () => {
+
+describe('escrow', async() => {
   // Configure the client to use the local cluster.
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
   const payer = provider.wallet as anchor.Wallet;
+  const connection = new Connection('devnet')
 
-  const program = anchor.workspace.Counter as Program<Counter>;
+  const program = anchor.workspace.Counter as Program<EscrowVault>;
 
-  const counterKeypair = Keypair.generate();
+  const firstmintPubkey = Keypair.generate();
 
-  it('Initialize Counter', async () => {
-    await program.methods
-      .initialize()
-      .accounts({
-        counter: counterKeypair.publicKey,
-        payer: payer.publicKey,
-      })
-      .signers([counterKeypair])
-      .rpc();
+  const seed = new BN(randomBytes(8));
 
-    const currentCount = await program.account.counter.fetch(
-      counterKeypair.publicKey
-    );
+  const firstmintata = await createAssociatedTokenAccount(
+    connection, // connection
+    payer.payer, // fee payer
+    firstmintPubkey.publicKey, // mint
+    payer.publicKey // owner,
+  );
 
-    expect(currentCount.count).toEqual(0);
+  const escrow = PublicKey.findProgramAddressSync(
+    [Buffer.from("escrow"), payer.publicKey.toBuffer(), seed.toArrayLike(Buffer, "le", 8)],
+    program.programId
+  )[0]
+
+  const vault = getAssociatedTokenAddressSync(firstmintPubkey.publicKey, escrow, true, TOKEN_PROGRAM_ID)
+
+
+
+  it('It create a Escrow acc', async () => {
+    await program.methods.make(seed, new BN(8), new BN(4)).accounts({
+      maker: payer.publicKey,
+      mintA: firstmintPubkey,
+      makerAtaA: firstmintata,
+      escrow: escrow,
+      vault: vault,
+      tokenProgram: TOKEN_PROGRAM_ID,
+      associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+      systemProgram: SystemProgram.programId
+    }).rpc();
   });
 
-  it('Increment Counter', async () => {
-    await program.methods
-      .increment()
-      .accounts({ counter: counterKeypair.publicKey })
-      .rpc();
 
-    const currentCount = await program.account.counter.fetch(
-      counterKeypair.publicKey
-    );
+  it('It refund from escrow acc', async () => {
 
-    expect(currentCount.count).toEqual(1);
+    await program.methods.refund().accounts({
+      maker: payer.publicKey,
+      mintA: firstmintPubkey,
+      makerAtaA: firstmintata,
+      escrow: escrow,
+      vault: vault,
+      tokenProgram: TOKEN_PROGRAM_ID,
+      associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+      systemProgram: SystemProgram.programId
+    }).rpc();
+
   });
 
-  it('Increment Counter Again', async () => {
-    await program.methods
-      .increment()
-      .accounts({ counter: counterKeypair.publicKey })
-      .rpc();
-
-    const currentCount = await program.account.counter.fetch(
-      counterKeypair.publicKey
-    );
-
-    expect(currentCount.count).toEqual(2);
-  });
-
-  it('Decrement Counter', async () => {
-    await program.methods
-      .decrement()
-      .accounts({ counter: counterKeypair.publicKey })
-      .rpc();
-
-    const currentCount = await program.account.counter.fetch(
-      counterKeypair.publicKey
-    );
-
-    expect(currentCount.count).toEqual(1);
-  });
-
-  it('Set counter value', async () => {
-    await program.methods
-      .set(42)
-      .accounts({ counter: counterKeypair.publicKey })
-      .rpc();
-
-    const currentCount = await program.account.counter.fetch(
-      counterKeypair.publicKey
-    );
-
-    expect(currentCount.count).toEqual(42);
-  });
-
-  it('Set close the counter account', async () => {
-    await program.methods
-      .close()
-      .accounts({
-        payer: payer.publicKey,
-        counter: counterKeypair.publicKey,
-      })
-      .rpc();
-
-    // The account should no longer exist, returning null.
-    const userAccount = await program.account.counter.fetchNullable(
-      counterKeypair.publicKey
-    );
-    expect(userAccount).toBeNull();
-  });
 });

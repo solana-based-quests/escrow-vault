@@ -1,13 +1,7 @@
-/**
- * Program IDL in camelCase format in order to be used in JS/TS.
- *
- * Note that this is only a type helper and is not the actual IDL. The original
- * IDL can be found at `target/idl/anchor_escrow.json`.
- */
-export type AnchorEscrow = {
-  "address": "CdbVJdguReS1ij7ZrUyAbf8KBfMjT75jyhSCggtVrPon",
+{
+  "address": "532hd4Thge8xrp15FA7xnnn3GVZwcETVFE9nW85NBd4P",
   "metadata": {
-    "name": "anchorEscrow",
+    "name": "escrow_vault",
     "version": "0.1.0",
     "spec": "0.1.0",
     "description": "Created with Anchor"
@@ -32,10 +26,10 @@ export type AnchorEscrow = {
           "signer": true
         },
         {
-          "name": "mintA"
+          "name": "mint_a"
         },
         {
-          "name": "makerAtaA",
+          "name": "maker_ata_a",
           "writable": true,
           "pda": {
             "seeds": [
@@ -45,11 +39,11 @@ export type AnchorEscrow = {
               },
               {
                 "kind": "account",
-                "path": "tokenProgram"
+                "path": "token_program"
               },
               {
                 "kind": "account",
-                "path": "mintA"
+                "path": "mint_a"
               }
             ],
             "program": {
@@ -129,11 +123,11 @@ export type AnchorEscrow = {
               },
               {
                 "kind": "account",
-                "path": "tokenProgram"
+                "path": "token_program"
               },
               {
                 "kind": "account",
-                "path": "mintA"
+                "path": "mint_a"
               }
             ],
             "program": {
@@ -176,14 +170,14 @@ export type AnchorEscrow = {
           }
         },
         {
-          "name": "associatedTokenProgram",
+          "name": "associated_token_program",
           "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
         },
         {
-          "name": "tokenProgram"
+          "name": "token_program"
         },
         {
-          "name": "systemProgram",
+          "name": "system_program",
           "address": "11111111111111111111111111111111"
         }
       ],
@@ -224,13 +218,13 @@ export type AnchorEscrow = {
           ]
         },
         {
-          "name": "mintA",
+          "name": "mint_a",
           "relations": [
             "escrow"
           ]
         },
         {
-          "name": "makerAtaA",
+          "name": "maker_ata_a",
           "writable": true,
           "pda": {
             "seeds": [
@@ -240,11 +234,11 @@ export type AnchorEscrow = {
               },
               {
                 "kind": "account",
-                "path": "tokenProgram"
+                "path": "token_program"
               },
               {
                 "kind": "account",
-                "path": "mintA"
+                "path": "mint_a"
               }
             ],
             "program": {
@@ -309,7 +303,7 @@ export type AnchorEscrow = {
               {
                 "kind": "account",
                 "path": "escrow.seed",
-                "account": "escrow"
+                "account": "Escrow"
               }
             ]
           }
@@ -325,11 +319,11 @@ export type AnchorEscrow = {
               },
               {
                 "kind": "account",
-                "path": "tokenProgram"
+                "path": "token_program"
               },
               {
                 "kind": "account",
-                "path": "mintA"
+                "path": "mint_a"
               }
             ],
             "program": {
@@ -372,14 +366,14 @@ export type AnchorEscrow = {
           }
         },
         {
-          "name": "associatedTokenProgram",
+          "name": "associated_token_program",
           "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
         },
         {
-          "name": "tokenProgram"
+          "name": "token_program"
         },
         {
-          "name": "systemProgram",
+          "name": "system_program",
           "address": "11111111111111111111111111111111"
         }
       ],
@@ -388,7 +382,7 @@ export type AnchorEscrow = {
   ],
   "accounts": [
     {
-      "name": "escrow",
+      "name": "Escrow",
       "discriminator": [
         31,
         213,
@@ -403,7 +397,7 @@ export type AnchorEscrow = {
   ],
   "types": [
     {
-      "name": "escrow",
+      "name": "Escrow",
       "type": {
         "kind": "struct",
         "fields": [
@@ -416,7 +410,7 @@ export type AnchorEscrow = {
             "type": "pubkey"
           },
           {
-            "name": "mintA",
+            "name": "mint_a",
             "type": "pubkey"
           },
           {
@@ -431,4 +425,4 @@ export type AnchorEscrow = {
       }
     }
   ]
-};
+}
