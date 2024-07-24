@@ -52,7 +52,7 @@ impl<'info> Refund<'info> {
             &[self.escrow.bump],
         ]];
 
-        let xfer_accounts = TransferChecked {
+        let transfer_accounts = TransferChecked {
             from: self.vault.to_account_info(),
             mint: self.mint_a.to_account_info(),
             to: self.maker_ata_a.to_account_info(),
@@ -61,7 +61,7 @@ impl<'info> Refund<'info> {
 
         let ctx = CpiContext::new_with_signer(
             self.token_program.to_account_info(),
-            xfer_accounts,
+            transfer_accounts,
             &signer_seeds,
         );
 

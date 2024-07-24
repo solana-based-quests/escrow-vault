@@ -5,7 +5,7 @@ seeds = false
 skip-lint = false
 
 [programs.devnet]
-escrow_vault = "532hd4Thge8xrp15FA7xnnn3GVZwcETVFE9nW85NBd4P"
+escrow_vault = "3R1JYpXixqemMmWZ9rh2kQZnuPNvPgm2Zn3TY8AB5svH"
 
 [registry]
 url = "https://api.apr.dev"

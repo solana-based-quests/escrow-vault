@@ -13,6 +13,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 export function EscrowAccountList({ firstMint, firstMintAta}: { firstMint: PublicKey; firstMintAta: PublicKey;}) {
   const { accounts, getProgramAccount } = useEscrowProgram();
 
+  
   if (getProgramAccount?.isLoading) {
     return <span className="loading loading-spinner loading-lg"></span>;
   }
@@ -36,8 +37,10 @@ export function EscrowAccountList({ firstMint, firstMintAta}: { firstMint: Publi
             <EscrowCard
               key={account.publicKey.toString()}
               account={account.publicKey}
-              firstMint={firstMint!}
+              firstMints={firstMint!}
+              firstMint={account.account.mintA.toString()}
               firstMintAta={firstMintAta!}
+              tokenReceivedAmount={JSON.stringify(account.account.receive)}
             />
           ))}
         </div>
@@ -51,7 +54,7 @@ export function EscrowAccountList({ firstMint, firstMintAta}: { firstMint: Publi
   );
 }
 
-function EscrowCard({ account, firstMint, firstMintAta }: { account: PublicKey; firstMint: PublicKey; firstMintAta: PublicKey; }) {
+function EscrowCard({ account, firstMint, firstMintAta, tokenReceivedAmount,firstMints }: { account: PublicKey; firstMint: PublicKey; firstMintAta: PublicKey; tokenReceivedAmount:string; firstMints:PublicKey }) {
   const {
     accountQuery,
     refundFromEscrow,
@@ -74,10 +77,25 @@ function EscrowCard({ account, firstMint, firstMintAta }: { account: PublicKey; 
             </p>
           </div>
 
+          <div className="text-center space-y-4 flex flex-row gap-2">
+           Token mint: <p>
+              <ExplorerLink
+                path={`account/${firstMint}`}
+                label={ellipsify(firstMint.toString())}
+              />
+            </p>
+          </div>
+
+          <div className="text-center space-y-4 flex flex-row gap-2">
+           Received Token Amount: <p>
+              {tokenReceivedAmount.trim()}
+            </p>
+          </div>
+
           <div className="card-actions justify-around">
             <button
               className="btn btn-xs lg:btn-md btn-outline btn-primary"
-              onClick={() => refundFromEscrow.mutateAsync({ maker: publicKey!, firstMint, firstMintAta })}
+              onClick={() => refundFromEscrow.mutateAsync({ maker: publicKey!, firstMints, firstMintAta })}
               disabled={refundFromEscrow.isPending}
             >
               Refund from Escrow

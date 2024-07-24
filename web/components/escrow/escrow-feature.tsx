@@ -72,7 +72,7 @@ export default function EscrowFeature() {
             placeholder='Add user receive'
           />
           <button
-            className='btn btn-secondary mt-3 px-4 py-2 rounded-lg disabled:opacity-99'
+            className='btn btn-primary mt-3 px-4 py-2 rounded-lg disabled:opacity-99'
             onClick={handleSubmit}
             disabled={initializeEscrow.isPending || !isDataValid}
           >

@@ -17,9 +17,6 @@ pub struct Make<'info> {
     )]
     pub mint_a: InterfaceAccount<'info, Mint>,
     #[account(
-        mint::token_program = token_program
-    )]
-    #[account(
         mut,
         associated_token::mint = mint_a,
         associated_token::authority = maker,

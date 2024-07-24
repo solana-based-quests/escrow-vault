@@ -135,19 +135,19 @@ export function useEscrowProgramAccount({ account }: { account: PublicKey }) {
 
   const refundFromEscrow = useMutation({
     mutationKey: ['escrow', 'refund_from_escrow', { cluster }],
-    mutationFn: async ({ maker, firstMint, firstMintAta }: { maker: PublicKey; firstMint: PublicKey; firstMintAta: PublicKey }) => {
+    mutationFn: async ({ maker, firstMints, firstMintAta }: { maker: PublicKey; firstMints: PublicKey; firstMintAta: PublicKey }) => {
 
       const escrow = PublicKey.findProgramAddressSync(
         [Buffer.from("escrow"), maker.toBuffer(), seed.toArrayLike(Buffer, "le", 8)],
         program.programId
       )[0]
 
-      const vault = getAssociatedTokenAddressSync(firstMint, escrow, true, TOKEN_PROGRAM_ID)
+      const vault = getAssociatedTokenAddressSync(firstMints, escrow, true, TOKEN_PROGRAM_ID)
 
 
       return program.methods.refund().accounts({
         maker: maker,
-        mintA: firstMint,
+        mintA: firstMints,
         makerAtaA: firstMintAta,
         escrow: escrow,
         vault: vault,

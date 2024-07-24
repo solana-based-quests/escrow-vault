@@ -6,7 +6,7 @@ use contexts::*;
 pub mod state;
 pub use state::*;
 
-declare_id!("532hd4Thge8xrp15FA7xnnn3GVZwcETVFE9nW85NBd4P");
+declare_id!("3R1JYpXixqemMmWZ9rh2kQZnuPNvPgm2Zn3TY8AB5svH");
 
 #[program]
 pub mod escrow_vault {
