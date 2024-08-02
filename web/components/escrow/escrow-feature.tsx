@@ -41,10 +41,14 @@ export default function EscrowFeature() {
         }
       >
         <p className="mb-6">
-          <ExplorerLink
+         Escrow-vault program ID: <ExplorerLink
             path={`account/${programId}`}
             label={ellipsify(programId.toString())}
           />
+        </p>
+
+        <p className="mb-3">
+         <strong className='text-red-600'>Warning</strong> - Use secret key only for your demo wallet which have devnet faucet only(never add real fund in this wallet).
         </p>
 
         {/**escrow create start */}
