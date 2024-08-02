@@ -195,10 +195,6 @@ export type EscrowVault = {
         {
           "name": "deposit",
           "type": "u64"
-        },
-        {
-          "name": "receive",
-          "type": "u64"
         }
       ]
     },
@@ -420,7 +416,7 @@ export type EscrowVault = {
             "type": "pubkey"
           },
           {
-            "name": "receive",
+            "name": "deposit",
             "type": "u64"
           },
           {

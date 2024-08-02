@@ -40,7 +40,7 @@ export function EscrowAccountList({ firstMint, firstMintAta}: { firstMint: Publi
               firstMints={firstMint!}
               firstMint={account.account.mintA.toString()}
               firstMintAta={firstMintAta!}
-              tokenReceivedAmount={JSON.stringify(account.account.receive)}
+              tokendepositedAmount={account.account.deposit.toString()}
             />
           ))}
         </div>
@@ -54,7 +54,7 @@ export function EscrowAccountList({ firstMint, firstMintAta}: { firstMint: Publi
   );
 }
 
-function EscrowCard({ account, firstMint, firstMintAta, tokenReceivedAmount,firstMints }: { account: PublicKey; firstMint: PublicKey; firstMintAta: PublicKey; tokenReceivedAmount:string; firstMints:PublicKey }) {
+function EscrowCard({ account, firstMint, firstMintAta, tokendepositedAmount,firstMints }: { account: PublicKey; firstMint: PublicKey; firstMintAta: PublicKey; tokendepositedAmount:string; firstMints:PublicKey }) {
   const {
     accountQuery,
     refundFromEscrow,
@@ -87,8 +87,8 @@ function EscrowCard({ account, firstMint, firstMintAta, tokenReceivedAmount,firs
           </div>
 
           <div className="text-center space-y-4 flex flex-row gap-2">
-           Received Token Amount: <p>
-              {tokenReceivedAmount.trim()}
+           vault Token Amount: <p>
+              {tokendepositedAmount.trim()}
             </p>
           </div>
 

@@ -14,9 +14,9 @@ pub mod escrow_vault {
 
     // make an escrow
 
-    pub fn make(ctx: Context<Make>, seed: u64, deposit: u64, receive: u64) -> Result<()> {
+    pub fn make(ctx: Context<Make>, seed: u64, deposit: u64) -> Result<()> {
         ctx.accounts.deposit(deposit)?;
-        ctx.accounts.save_escrow(seed, receive, &ctx.bumps)
+        ctx.accounts.save_escrow(seed, deposit, &ctx.bumps)
     }
 
     // just refund your tokens from escrow

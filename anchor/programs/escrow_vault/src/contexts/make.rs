@@ -45,12 +45,12 @@ pub struct Make<'info> {
 }
 
 impl<'info> Make<'info> {
-    pub fn save_escrow(&mut self, seed: u64, receive: u64, bumps: &MakeBumps) -> Result<()> {
+    pub fn save_escrow(&mut self, seed: u64, deposit: u64, bumps: &MakeBumps) -> Result<()> {
         self.escrow.set_inner(Escrow {
             seed,
             maker: self.maker.key(),
             mint_a: self.mint_a.key(),
-            receive,
+            deposit,
             bump: bumps.escrow,
         });
         Ok(())

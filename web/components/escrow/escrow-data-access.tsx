@@ -44,7 +44,7 @@ export function useEscrowProgram() {
 
   const initializeEscrow = useMutation({
     mutationKey: ['escrow', 'make_escrow', { cluster }],
-    mutationFn: async ({ demosecretKey, deposit, receive, maker, setFirstMint, setFirstMintAta}: { demosecretKey: string; deposit: string; receive: string; maker: PublicKey; setFirstMint: any; setFirstMintAta: any;}) => {
+    mutationFn: async ({ demosecretKey, deposit, maker, setFirstMint, setFirstMintAta}: { demosecretKey: string; deposit: string; maker: PublicKey; setFirstMint: any; setFirstMintAta: any;}) => {
 
       const feePayer = Keypair.fromSecretKey(
         bs58.decode(demosecretKey)
@@ -82,7 +82,7 @@ export function useEscrowProgram() {
       );
     
       const dnum = Number(deposit);
-      const rnum = Number(receive);
+     // const rnum = Number(receive);
 
 
       const escrow = PublicKey.findProgramAddressSync(
@@ -92,7 +92,7 @@ export function useEscrowProgram() {
 
       const vault = getAssociatedTokenAddressSync(firstmintPubkey, escrow, true, TOKEN_PROGRAM_ID)
 
-      return program.methods.make(seed, new BN(dnum), new BN(rnum)).accounts({
+      return program.methods.make(seed, new BN(dnum)).accounts({
         maker: maker,
         mintA: firstmintPubkey,
         makerAtaA: firstmintata,

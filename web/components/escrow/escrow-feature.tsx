@@ -18,17 +18,16 @@ export default function EscrowFeature() {
   const { initializeEscrow } = useEscrowProgram();
 
   const [deposit, setUserDeposit] = useState("");
-  const [receive, setUserReceive] = useState("");
   const [demosecretKey, setDemoSecretKey] = useState<string>('');
 
   const [firstMint, setFirstMint] = useState<PublicKey>();
   const [firstMintAta, setFirstMintAta] = useState<PublicKey>();
 
-  const isDataValid = deposit.trim() !== "" && receive.trim() !== "";
+  const isDataValid = deposit.trim() !== "";
 
   const handleSubmit = () => {
     if (isDataValid && publicKey) {
-      initializeEscrow.mutateAsync({ demosecretKey, deposit, receive, maker: publicKey, setFirstMint, setFirstMintAta });
+      initializeEscrow.mutateAsync({ demosecretKey, deposit, maker: publicKey, setFirstMint, setFirstMintAta });
     }
   }
 
@@ -63,13 +62,6 @@ export default function EscrowFeature() {
             value={deposit}
             onChange={(e) => setUserDeposit(e.target.value)}
             placeholder='Add user deposit'
-          />
-          <input
-            className='input input-bordered rounded-lg border border-gray-300 p-2'
-            type='text'
-            value={receive}
-            onChange={(e) => setUserReceive(e.target.value)}
-            placeholder='Add user receive'
           />
           <button
             className='btn btn-primary mt-3 px-4 py-2 rounded-lg disabled:opacity-99'
