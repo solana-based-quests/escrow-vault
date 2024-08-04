@@ -82,7 +82,6 @@ export function useEscrowProgram() {
       );
     
       const dnum = Number(deposit);
-     // const rnum = Number(receive);
 
 
       const escrow = PublicKey.findProgramAddressSync(

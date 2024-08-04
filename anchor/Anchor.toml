@@ -12,7 +12,7 @@ url = "https://api.apr.dev"
 
 [provider]
 cluster = "Devnet"
-wallet = "/Users/shivamsoni/.config/solana/id.json"
+wallet = "~/solana/id.json"
 
 [scripts]
 test = "../node_modules/.bin/nx run anchor:jest"
